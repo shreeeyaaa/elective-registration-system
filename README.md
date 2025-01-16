@@ -1,0 +1,1 @@
+go to venv and use python -m uvicorn main:app --reload
