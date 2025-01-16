@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Courses - Student Dashboard</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Sidebar (Same as index.html) -->
+    <nav id="sidebar">
+        <!-- Same sidebar content as index.html -->
+    </nav>
+
+    <div class="main-content">
+        <header>
+            <!-- Same header content as index.html -->
+        </header>
+
+        <main>
+            <div class="page-header">
+                <h1>Available Elective Courses</h1>
+                <p>Browse and register for available elective courses</p>
+            </div>
+
+            <!-- Course Filters -->
+            <div class="course-filters">
+                <div class="search-box">
+                    <i class='bx bx-search'></i>
+                    <input type="text" placeholder="Search courses...">
+                </div>
+                <div class="filter-options">
+                    <select name="department">
+                        <option value="">All Departments</option>
+                        <option value="cs">Computer Science</option>
+                        <option value="eng">Engineering</option>
+                        <option value="bus">Business</option>
+                    </select>
+                    <select name="credits">
+                        <option value="">All Credits</option>
+                        <option value="2">2 Credits</option>
+                        <option value="3">3 Credits</option>
+                        <option value="4">4 Credits</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Detailed Course Listings -->
+            <div class="courses-grid detailed">
+                <div class="course-card detailed">
+                    <div class="course-header">
+                        <h3>Advanced Web Development</h3>
+                        <span class="credits">3 Credits</span>
+                    </div>
+                    <div class="course-details">
+                        <p><i class='bx bxs-user'></i> Prof. Sarah Johnson</p>
+                        <p><i class='bx bxs-time'></i> Mon, Wed 10:00 AM - 11:30 AM</p>
+                        <p><i class='bx bxs-calendar'></i> Fall 2024</p>
+                        <p><i class='bx bxs-map'></i> Room 301, Tech Building</p>
+                    </div>
+                    <div class="course-description">
+                        <h4>Course Description</h4>
+                        <p>This advanced course covers modern web development techniques including React, Node.js, and cloud deployment. Students will build full-stack applications and learn industry best practices.</p>
+                        <h4>Prerequisites</h4>
+                        <p>Introduction to Web Development or equivalent experience</p>
+                        <h4>Learning Outcomes</h4>
+                        <ul>
+                            <li>Master modern JavaScript frameworks</li>
+                            <li>Build scalable web applications</li>
+                            <li>Implement security best practices</li>
+                        </ul>
+                    </div>
+                    <button class="btn-register">Register for Course</button>
+                </div>
+
+                <!-- More course cards with similar detailed structure -->
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

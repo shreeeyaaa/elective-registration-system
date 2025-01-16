@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Registration Form</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .card {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            padding: 24px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .course-info {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .card-content {
+            padding: 24px;
+        }
+
+        .section {
+            margin-bottom: 24px;
+        }
+
+        .info-box {
+            background-color: #f0f7ff;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+        }
+
+        .info-box h3 {
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            font-size: 14px;
+        }
+
+        .info-label {
+            color: #666;
+        }
+
+        .warning-box {
+            display: flex;
+            gap: 12px;
+            background-color: #fff8e6;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+        }
+
+        .warning-icon {
+            width: 20px;
+            height: 20px;
+            color: #f59e0b;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .confirmation-box {
+            background-color: #f9fafb;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            margin-top: 3px;
+        }
+
+        .submit-button {
+            width: 100%;
+            background-color: #2563eb;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .submit-button:hover {
+            background-color: #1d4ed8;
+        }
+
+        .status-text {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-top: 16px;
+        }
+    </style>
+</head>
+<!-- <body>
+
+
+    <div class="card">
+        <div class="card-header">
+            <h1 class="card-title">Course Registration: Advanced Database Management Systems</h1>
+            <div class="course-info">Course Code: CMP 480 • Credits: 3</div>
+        </div>
+        <div class="card-content">
+            <div class="info-box">
+                <h3>Course Details</h3>
+                <div class="info-grid">
+                    <div>
+                        <span class="info-label">Department:</span>
+                        <span>Computer</span>
+                    </div>
+                    <div>
+                        <span class="info-label">Available Slots:</span>
+                        <span>25</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="warning-box">
+                <svg class="warning-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div>
+                    <strong>Prerequisites Check:</strong>
+                    <p>System will verify if you have completed the required prerequisites for this course.</p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Registration Priority</label>
+                <select>
+                    <option value="1">Priority 1 (Highest)</option>
+                    <option value="2">Priority 2</option>
+                    <option value="3">Priority 3</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Remarks (Optional)</label>
+                <textarea placeholder="Add any additional information or special requests..."></textarea>
+            </div>
+
+            <div class="confirmation-box">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="confirm">
+                    <label for="confirm">
+                        I confirm that all information provided is correct and I understand that my registration 
+                        is subject to prerequisite verification and admin approval.
+                    </label>
+                </div>
+            </div>
+
+            <button class="submit-button">Submit Registration</button>
+
+            <div class="status-text">
+                Your registration will be pending until approved by an administrator
+            </div>
+        </div>
+    </div>
+</body> -->
+<body>
+    <div class="card">
+        <div class="card-header">
+            <h1 class="card-title">Course Registration: Advanced Database Management Systems</h1>
+            <div class="course-info">Course Code: {{course_code}} • Credits: 3</div>
+        </div>
+        <div class="card-content">
+            <div class="info-box">
+                <h3>Course Details</h3>
+                <div class="info-grid">
+                    <div>
+                        <span class="info-label">Department:</span>
+                        <span>Computer</span>
+                    </div>
+                    <div>
+                        <span class="info-label">Available Slots:</span>
+                        <span>25</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="warning-box">
+                <svg class="warning-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div>
+                    <strong>Prerequisites Check:</strong>
+                    <p>System will verify if you have completed the required prerequisites for this course.</p>
+                </div>
+            </div>
+
+            <form action="/register" method="POST">
+                <input type="hidden" name="course_code" value="{{ course_code }}">
+                <input type="hidden" name="student_id" value="{{ student_id }}"> <!-- Replace with dynamic value -->
+
+                <div class="form-group">
+                    <label class="form-label">Registration Priority</label>
+                    <select name="priority">
+                        <option value="1">Priority 1 (Highest)</option>
+                        <option value="2">Priority 2</option>
+                        <option value="3">Priority 3</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Remarks (Optional)</label>
+                    <textarea name="remarks" placeholder="Add any additional information or special requests..."></textarea>
+                </div>
+
+                <div class="confirmation-box">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="confirm" required>
+                        <label for="confirm">
+                            I confirm that all information provided is correct and I understand that my registration 
+                            is subject to prerequisite verification and admin approval.
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-button">Submit Registration</button>
+            </form>
+
+            <div class="status-text">
+                Your registration will be pending until approved by an administrator
+            </div>
+        </div>
+    </div>
+</body>
+
+
+</html>

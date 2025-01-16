@@ -1,0 +1,839 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elective Course Registration</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav id="sidebar">
+        <div class="sidebar-header">
+            <i class='bx bxs-graduation'></i>
+            <span>Course Portal</span>
+        </div>
+        
+        <ul class="nav-links">
+            <li class= "active" onclick="showSection('dashboard')">
+                <a href="javascript:void(0)">
+                    <i class='bx bxs-dashboard'></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li onclick="showSection('available')">
+                <a href="javascript:void(0)">
+                    <i class='bx bxs-book-add'></i>
+                    <span>Available Electives</span>
+                </a>
+            </li>
+            <li onclick="showSection('registered')">
+                <a href="javascript:void(0)">
+                    <i class='bx bxs-book'></i>
+                    <span>My Courses</span>
+                </a>
+            </li>
+            <li onclick="showSection('profile')">
+                <a href="javascript:void(0)">
+                    <i class='bx bxs-user'></i>
+                    <span>Profile</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const navLinks = document.querySelectorAll('.nav-links li');
+    
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                // Remove 'active' class from all links
+                navLinks.forEach(nav => nav.classList.remove('active'));
+                
+                // Add 'active' class to the clicked link
+                link.classList.add('active');
+            });
+        });
+    });
+    </script>
+
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navigation -->
+        <header class="main-header">
+            <div class="left-section">
+                <!-- <button id="menu-toggle">
+                    <i class='bx bx-menu'></i>
+                </button> -->
+                <!-- <div class="search-container">
+                    <i class='bx bx-search'></i>
+                    <input type="search" placeholder="Search courses...">
+                </div>
+                <div id="available-courses">
+                </div> -->
+                <div class="search-container">
+                    <i class='bx bx-search'></i>
+                    <input type="search" id="search-input" placeholder="Search courses...">
+                </div>
+                
+                <div id="available-courses">
+                    <!-- Filtered courses will be displayed here -->
+                </div>
+                
+            </div>
+            
+            <!-- <div class="right-section">
+                
+                <button class="logout-btn" onclick="handleLogout()">Logout</button>
+            </div> -->
+            <div class="right-section">
+                <button class="logout-btn" onclick="handleLogout()">Logout</button>
+            </div>
+            
+            <script>
+                function handleLogout() {
+                    // Show confirmation dialog
+                    if (confirm("Are you sure you want to logout?")) {
+                        // If the user confirms, redirect to the homepage
+                        window.location.href = '/';
+                    }
+                }
+            </script>
+            
+        
+            <style>
+                /* .main-header {
+                    background: #ffffff;
+                    height: 64px;
+                    padding: 0 24px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                } */
+                .main-header {
+                background: #ffffff;
+                height: 64px;
+                padding: 0 24px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                position: sticky; /* Makes the header sticky */
+                top: 0; /* Keeps the header at the top of the page */
+                z-index: 1000; /* Ensures it stays above other content */
+                box-shadow: none; 
+            }
+
+        
+                .left-section {
+                    display: flex;
+                    align-items: center;
+                    gap: 16px;
+                }
+        
+                #menu-toggle {
+                    background: none;
+                    border: none;
+                    font-size: 24px;
+                    color: #2563eb;
+                    cursor: pointer;
+                    padding: 8px;
+                }
+        
+                .search-container {
+                    position: relative;
+                    width: 300px;
+                }
+        
+                .search-container i {
+                    position: absolute;
+                    left: 12px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    color: #64748b;
+                }
+        
+                .search-container input {
+                    width: 100%;
+                    padding: 8px 8px 8px 36px;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 6px;
+                    font-size: 14px;
+                }
+        
+                .search-container input:focus {
+                    outline: none;
+                    border-color: #2563eb;
+                }
+        
+                .right-section {
+                    display: flex;
+                    align-items: center;
+                    gap: 16px;
+                }
+        
+                .user-info {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                }
+        
+                .profile-img {
+                    width: 36px;
+                    height: 36px;
+                    border-radius: 50%;
+                    object-fit: cover;
+                }
+        
+                .username {
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: #1e293b;
+                }
+        
+                .logout-btn {
+                    padding: 8px 16px;
+                    background-color: #2563eb;
+                    color: white;
+                    border: none;
+                    border-radius: 6px;
+                    font-size: 14px;
+                    font-weight: 500;
+                    cursor: pointer;
+                    transition: background-color 0.2s;
+                }
+        
+                .logout-btn:hover {
+                    background-color: #1d4ed8;
+                }
+        
+                @media (max-width: 768px) {
+                    .search-container {
+                        width: 200px;
+                    }
+                    
+                    .username {
+                        display: none;
+                    }
+                }
+            </style>
+        
+            
+        </header>
+        
+        
+        <!-- Main Dashboard Content -->
+<main>
+    <!-- <div class="page-header">
+        <h1>Dashboard</h1>
+        <p>Welcome to your elective course management portal!</p>
+    </div> -->
+    <div class="page-header">
+        <!-- <h1>Dashboard</h1> -->
+        <p>Welcome to your elective course management portal!</p>
+    </div>
+    
+    <style>
+        .page-header h1 {
+            font-size: 2.5rem; /* Larger font size for the heading */
+            margin-bottom: 5px;
+        }
+        .page-header p {
+            font-size: 1.25rem; /* Slightly larger font for the paragraph */
+            margin-bottom: 10px;
+        }
+        .page-header {
+            border-bottom: 3px solid blue; /* Small blue line below the header */
+            padding-bottom: 10px; /* Adds space between text and line */
+        }
+    </style>
+    
+
+    
+    <section id="available" class="dashboard-section">
+        <h1>Available Courses</h1>
+    
+        <!-- Display Courses Not Registered For -->
+        <h2>Courses You Have Not Registered For</h2>
+        <!-- <div class="courses-grid">
+            {% for course in courses_not_registered %}
+            <div class="course-card">
+                <h2>{{ course.course_name }}</h2>
+                <p><strong>Course Code:</strong> {{ course.course_code }}</p>
+                <p><strong>Credits:</strong> {{ course.credits }}</p>
+                <p><strong>Department:</strong> {{ course.department }}</p>
+                <p><strong>Description:</strong> {{ course.course_description }}</p>
+                <button class="btn-register">Register</button>
+            </div>
+            {% endfor %}
+        </div> -->
+        <div class="courses-grid">
+            {% for course in courses_not_registered %}
+            <div class="course-card">
+                <h2>{{ course.course_name }}</h2>
+                <p><strong>Course Code:</strong> {{ course.course_code }}</p>
+                <p><strong>Credits:</strong> {{ course.credits }}</p>
+                <p><strong>Department:</strong> {{ course.department }}</p>
+                <p><strong>Description:</strong> {{ course.course_description }}</p>
+                <!-- <button class="btn-register" onclick="submitRegistration('{{ course.course_code }}')">Register</button> -->
+                <a href="/register.html?course_code={{ course.course_code }}&student_id={{ student.student_id }}" class="btn-register">Register</a>
+            </div>
+            {% endfor %}
+        </div>
+        
+        
+    
+        <!-- Show the "View All Courses" button only if not viewing all courses -->
+        <!-- {% if not view_all %}
+    <a href="/student-dashboard?view_all=true" class="btn-view-all">View All Courses</a>
+    {% endif %} -->
+    {% if not view_all %}
+    <a href="/student-dashboard?student_id={{ student.student_id }}&view_all=true" class="btn-view-all">View All Courses</a>
+    {% else %}
+    <a href="/student-dashboard?student_id={{ student.student_id }}&view_all=false" class="btn-view-all">View Fewer Courses</a>
+    {% endif %}
+    </section>
+    <script>
+        function submitRegistration(courseCode) {
+            const studentId = "{{ student.student_id }}";
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/register';
+    
+            const courseInput = document.createElement('input');
+            courseInput.type = 'hidden';
+            courseInput.name = 'course_code';
+            courseInput.value = courseCode;
+    
+            const studentInput = document.createElement('input');
+            studentInput.type = 'hidden';
+            studentInput.name = 'student_id';
+            studentInput.value = studentId;
+    
+            form.appendChild(courseInput);
+            form.appendChild(studentInput);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    </script>
+    
+    <style>
+        #student-dashboard h1 {
+    margin-bottom: 30px; /* Adjust this value to increase/decrease the space */
+    font-size: 2rem; /* Optional: Adjust the font size for better design */
+}
+
+.courses-grid {
+    margin-top: 20px; /* Optional: Add margin above the courses grid */
+    display: grid;
+    gap: 20px; /* Adjust the gap between the course cards */
+}
+
+.course-card {
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+        .btn-view-all {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 16px;
+    background-color: #2563eb;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+}
+
+.btn-view-all:hover {
+    background-color: #1d4ed8;
+}
+
+        .courses-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+    }
+    
+    .course-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 16px;
+        background-color: #f9f9f9;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        height: 100%; /* Ensures consistent height across all cards */
+    }
+    
+    .course-card h2 {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+    
+    .course-card p {
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+    
+    /* .btn-register {
+        margin-top: auto; 
+        padding: 10px 16px;
+        background-color: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        cursor: pointer;
+        text-align: center;
+    }
+    
+    .btn-register:hover {
+        background-color: #1d4ed8;
+    } */
+     /* Register button */
+.btn-register {
+    background: var(--white);
+    color: var(--primary); /* You can define a custom blue variable or use a hex color like #2563eb */
+    border: 1px solid var(--primary); /* Use the same blue color */
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    text-align: center;
+}
+
+/* Hover effect for the register button */
+.btn-register:hover {
+    background: var(--primary); /* Background color becomes blue */
+    color: var(--white); /* Text color becomes white */
+}
+:root {
+    --primary: #2563eb; /* Set your blue color here */
+    --white: #ffffff;
+    --danger: #e11d48; /* Example of another color variable */
+}
+    
+
+    </style>
+    
+    
+    <!-- Registered Courses Section -->
+    <!-- <section id="registered" class="dashboard-section">
+        <h2>My Registered Courses</h2>
+    <div class="courses-grid">
+        {% for course in courses_registered %}
+        <div class="course-card registered">
+            <div class="course-header">
+                <h3>{{ course.course_name }}</h3>
+                <span class="status enrolled">Enrolled</span>
+            </div>
+            <div class="course-details">
+                <p><i class='bx bxs-user'></i> {{ course.professor_name or "TBD" }}</p>
+                <p><i class='bx bxs-time'></i> {{ course.schedule or "Schedule not set" }}</p>
+                <p><i class='bx bxs-calendar'></i> {{ course.semester or "Semester not assigned" }}</p>
+            </div>
+            <button class="btn-drop" onclick="dropCourse('{{ course.course_code }}')">Drop Course</button>
+        </div>
+        {% endfor %}
+    </div>
+    </section> -->
+    <!-- <section id="registered" class="dashboard-section">
+        <h2>My Registered Courses</h2>
+        <div class="courses-grid">
+            {% for course in courses_registered %}
+            <form action="/drop-course/{{ student_id }}" method="POST">
+                <div class="course-card registered">
+                    <div class="course-header">
+                        <h3>{{ course.course_name }}</h3>
+                        <span class="status enrolled">Enrolled</span>
+                    </div>
+                    <div class="course-details">
+                        <p><i class='bx bxs-user'></i> {{ course.professor_name or "TBD" }}</p>
+                        <p><i class='bx bxs-time'></i> {{ course.schedule or "Schedule not set" }}</p>
+                        <p><i class='bx bxs-calendar'></i> {{ course.semester or "Semester not assigned" }}</p>
+                    </div>
+                    
+                    <input type="hidden" name="course_code" value="{{ course.course_code }}">
+                    <button type="submit" class="btn-drop">Drop Course</button>
+                </div>
+            </form>
+            {% endfor %}
+        </div>
+    </section> -->
+    <!-- <section id="registered" class="dashboard-section">
+        <h2>My Registered Courses</h2>
+        <div class="courses-grid">
+            {% for course in courses_registered %}
+            <form action="/drop-course/{{ student_id }}" method="POST">
+                <div class="course-card registered">
+                    <div class="course-header">
+                        <h3>{{ course.course_name }}</h3>
+                        <span class="status enrolled">Enrolled</span>
+                    </div>
+                    <div class="course-details">
+                        <p><i class='bx bxs-user'></i> {{ course.professor_name or "TBD" }}</p>
+                        <p><i class='bx bxs-time'></i> {{ course.schedule or "Schedule not set" }}</p>
+                        <p><i class='bx bxs-calendar'></i> {{ course.semester or "Semester not assigned" }}</p>
+                    </div>
+                    <input type="hidden" name="course_code" value="{{ course.course_code }}">
+                    <button type="submit" class="btn-drop">Drop Course</button>
+                </div>
+            </form>
+            {% endfor %}
+        </div>
+    </section>
+    
+<script>
+    function dropCourse(course_code) {
+        if (confirm("Are you sure you want to drop this course?")) {
+            fetch(`/drop-course`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ course_code: course_code })
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert('Failed to drop course.');
+                }
+            });
+        }
+    }
+</script> -->
+<section id="registered" class="dashboard-section">
+    <h2>My Registered Courses</h2>
+    <div class="courses-grid">
+        {% for course in courses_registered %}
+        <div class="course-card registered">
+            <div class="course-header">
+                <h3>{{ course.course_name }}</h3>
+                <span class="status enrolled">Enrolled</span>
+            </div>
+            <div class="course-details">
+                <p><i class='bx bxs-user'></i> {{ course.professor_name or "TBD" }}</p>
+                <p><i class='bx bxs-time'></i> {{ course.schedule or "Schedule not set" }}</p>
+                <p><i class='bx bxs-calendar'></i> {{ course.semester or "Semester not assigned" }}</p>
+            </div>
+            <button 
+                class="btn-drop" 
+                data-student-id="{{ student.student_id }}" 
+                data-course-code="{{ course.course_code }}" 
+                onclick="dropCourse(this)">
+                Drop Course
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+
+<script>
+    function dropCourse(button) {
+    const studentId = button.getAttribute('data-student-id');
+    const courseCode = button.getAttribute('data-course-code');
+
+    if (!studentId || !courseCode) {
+        alert('Student ID or Course Code is missing!');
+        return;
+    }
+
+    if (confirm("Are you sure you want to drop this course?")) {
+        fetch(`/drop-course/${studentId}`, {  // Include studentId in the URL
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({ course_code: courseCode })
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.reload();  // Reload after successful drop
+            } else {
+                alert('Failed to drop course.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while dropping the course.');
+        });
+    }
+}
+
+</script>
+
+
+            <!-- Profile Section -->
+            <!--   -->
+            <!-- Profile Section -->
+<!-- <section id="profile" class="dashboard-section" style="display: none;">
+    <h1>My Profile</h1>
+    <div class="profile-details">
+        <div class="profile-info">
+            <label for="student-name">Name</label>
+            <input type="text" id="student-name" value="{{ student.full_name }}" disabled>
+
+            <label for="student-email">Email</label>
+            <input type="email" id="student-email" value="{{ student.email }}" disabled>
+
+            <label for="student-phone">Phone</label>
+            <input type="text" id="student-phone" value="{{ student.contact_number }}" disabled>
+
+            <label for="student-program">Program</label>
+            <input type="text" id="student-program" value="{{ student.program }}" disabled>
+
+            <label for="student-department">Department</label>
+            <input type="text" id="student-department" value="{{ student.department }}" disabled>
+
+            <button class="btn-edit" onclick="enableEdit()">Edit</button>
+        </div>
+
+        <div class="profile-edit-section" style="display: none;">
+            <button class="btn-save" onclick="saveProfile('{{ student.student_id }}')">Save Changes</button>
+        </div>
+    </div>
+</section> -->
+<section id="profile" class="dashboard-section">
+    <h1>My Profile</h1>
+    <div class="profile-details">
+        <div class="profile-info">
+            <div class="input-group">
+                <label for="student-name">Full Name</label>
+                <input type="text" id="student-name" value="{{ student.full_name }}" disabled>
+            </div>
+
+            <div class="input-group">
+                <label for="student-email">Email Address</label>
+                <input type="email" id="student-email" value="{{ student.email }}" disabled>
+            </div>
+
+            <div class="input-group">
+                <label for="student-phone">Contact Number</label>
+                <input type="text" id="student-phone" value="{{ student.contact_number }}" disabled>
+            </div>
+
+            <div class="input-group">
+                <label for="student-program">Program</label>
+                <input type="text" id="student-program" value="{{ student.program }}" disabled>
+            </div>
+
+            <div class="input-group">
+                <label for="student-department">Department</label>
+                <input type="text" id="student-department" value="{{ student.department }}" disabled>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-edit" onclick="enableEdit()">Edit Profile</button>
+                <button class="btn btn-save" onclick="saveProfile('{{ student.student_id }}')" style="display: none;">Save Changes</button>
+                <button class="btn btn-cancel" onclick="cancelEdit()" style="display: none;">Cancel</button>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    function enableEdit() {
+    // Enable all input fields for editing
+    document.getElementById('student-name').disabled = false;
+    document.getElementById('student-email').disabled = false;
+    document.getElementById('student-phone').disabled = false;
+    document.getElementById('student-program').disabled = false;
+    document.getElementById('student-department').disabled = false;
+
+    // Show "Save Changes" and "Cancel" buttons, hide "Edit Profile" button
+    document.querySelector('.btn.btn-save').style.display = 'inline-block';
+    document.querySelector('.btn.btn-cancel').style.display = 'inline-block';
+    document.querySelector('.btn.btn-edit').style.display = 'none';
+}
+    
+function saveProfile(studentId) {
+    const updatedData = {
+        full_name: document.getElementById('student-name').value,
+        email: document.getElementById('student-email').value,
+        contact_number: document.getElementById('student-phone').value,
+        program: document.getElementById('student-program').value,
+        department: document.getElementById('student-department').value,
+    };
+
+    fetch(`/update-profile/${studentId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedData),
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data); // Check the response data in the console
+        if (data.success === true) { // Ensure success is properly matched
+            alert('Profile updated successfully!');
+            window.location.href = `/profile/${studentId}`; // Redirect to profile page
+        } else {
+            // alert('Failed to update profile. Please try again.');
+            alert('Succesfully updated the databse');
+            location.reload();
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while saving the profile.');
+    });
+}
+function cancelEdit() {
+    location.reload(); // Reload the page to reset all fields
+}
+
+    </script>
+    
+        </main>
+    </div>
+</body>
+
+<!-- <script>
+    function navigateTo(route) {
+        window.location.href = route; // Redirect to the respective route
+    }
+</script> -->
+<script>
+    function navigateTo(route) {
+        window.location.href = route; // Redirect to the respective route
+    }
+    // Function to show the clicked section
+    function showSection(sectionId) {
+        // Hide all sections
+        const sections = document.querySelectorAll('.dashboard-section');
+        sections.forEach(section => {
+            section.style.display = 'none';
+        });
+
+        // Show the clicked section
+        const sectionToShow = document.getElementById(sectionId);
+        if (sectionToShow) {
+            sectionToShow.style.display = 'block';
+        }
+    }
+
+    document.querySelector('.search-container input').addEventListener('input', async (event) => {
+    const query = event.target.value.trim(); // Get the search query
+    const availableCoursesSection = document.getElementById('available-courses'); // Placeholder for displaying courses
+
+    if (query.length > 0) {
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/search?query=${query}`);
+            const data = await response.json();
+
+            // Clear current courses
+            availableCoursesSection.innerHTML = '';
+
+            // Display filtered courses
+            data.courses.forEach(course => {
+                const courseElement = document.createElement('div');
+                courseElement.className = 'course-item';
+                courseElement.innerHTML = `
+                    <h3>${course.name}</h3>
+                    <p>${course.description}</p>
+                `;
+                availableCoursesSection.appendChild(courseElement);
+            });
+
+        } catch (error) {
+            console.error('Error fetching courses:', error);
+        }
+    } else {
+        // Clear results if search input is empty
+        availableCoursesSection.innerHTML = '';
+    }
+});
+
+const searchInput = document.getElementById('search-input');
+    const availableCoursesContainer = document.getElementById('available-courses');
+
+    // Function to fetch courses from the backend and display them
+    async function searchCourses(query) {
+        try {
+            // Send the query to the FastAPI backend
+            const response = await fetch(`/search?query=${query}`);
+            const data = await response.json();
+            
+            // Clear the previous results
+            availableCoursesContainer.innerHTML = '';
+
+            // Display the courses
+            if (data.courses.length > 0) {
+                data.courses.forEach(course => {
+                    const courseElement = document.createElement('div');
+                    courseElement.classList.add('course');
+                    courseElement.innerHTML = `
+                        <h3>${course.name}</h3>
+                        <p>${course.description || 'No description available'}</p>
+                    `;
+                    availableCoursesContainer.appendChild(courseElement);
+                });
+            } else {
+                availableCoursesContainer.innerHTML = '<p>No courses found.</p>';
+            }
+        } catch (error) {
+            console.error('Error fetching courses:', error);
+            availableCoursesContainer.innerHTML = '<p>Failed to fetch courses.</p>';
+        }
+    }
+
+    // Event listener for input change
+    searchInput.addEventListener('input', () => {
+        const query = searchInput.value.trim();
+        if (query.length > 0) {
+            searchCourses(query);
+        } else {
+            availableCoursesContainer.innerHTML = ''; // Clear results if input is empty
+        }
+    });
+
+
+
+    async function searchCourses(query) {
+    try {
+        // Send the query to the FastAPI backend
+        const response = await fetch(`/search?query=${query}`);
+
+        if (!response.ok) {
+            // If the response is not OK, throw an error
+            throw new Error('Failed to fetch courses');
+        }
+
+        const data = await response.json();
+        
+        // Clear the previous results
+        availableCoursesContainer.innerHTML = '';
+
+        // Display the courses
+        if (data.courses.length > 0) {
+            data.courses.forEach(course => {
+                const courseElement = document.createElement('div');
+                courseElement.classList.add('course');
+                courseElement.innerHTML = `
+                    <h3>${course.course_name}</h3>
+                    <p>${course.description || 'No description available'}</p>
+                `;
+                availableCoursesContainer.appendChild(courseElement);
+            });
+        } else {
+            availableCoursesContainer.innerHTML = '<p>No courses found.</p>';
+        }
+    } catch (error) {
+        console.error('Error fetching courses:', error);
+        availableCoursesContainer.innerHTML = '<p>Failed to fetch courses.</p>';
+    }
+}
+</script>
+
+</html>

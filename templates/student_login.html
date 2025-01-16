@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Login - IOE Pulchowk Campus</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            background-color: #1a237e;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+        }
+
+        .campus-name {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-title {
+            color: #1a237e;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-subtitle {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            border-color: #1a237e;
+            outline: none;
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-bottom: 1.5rem;
+        }
+
+        .forgot-password a {
+            color: #1a237e;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
+        .login-btn {
+            width: 100%;
+            background: #1a237e;
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .login-btn:hover {
+            background: #283593;
+        }
+
+        .error-message {
+            color: #d32f2f;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        footer {
+            text-align: center;
+            color: #666;
+            padding: 1rem;
+            background-color: white;
+        }
+
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 1.5rem;
+            }
+
+            .navbar {
+                padding: 1rem;
+            }
+
+            .campus-name {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo-container">
+            <img src="/path/to/pulchowk-logo.png" alt="IOE Pulchowk Campus Logo" class="logo">
+            <span class="campus-name">IOE Pulchowk Campus</span>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="login-card">
+            <div class="login-header">
+                <h1 class="login-title">Student Login</h1>
+                <p class="login-subtitle">Access your course registration portal</p>
+            </div>
+
+            <form action="/student_login" method="POST">
+                <div class="form-group">
+                    <label for="student_id" class="form-label">Student ID</label>
+                    <input 
+                        type="text" 
+                        id="student_id" 
+                        name="student_id" 
+                        class="form-input" 
+                        required 
+                        placeholder="Enter your student ID"
+                    >
+                    <div class="error-message">Please enter your student ID</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        class="form-input" 
+                        required 
+                        placeholder="Enter your email"
+                    >
+                    <div class="error-message">Please enter a valid email address</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        class="form-input" 
+                        required 
+                        placeholder="Enter your password"
+                    >
+                    <div class="error-message">Password is required</div>
+                </div>
+
+                <div class="forgot-password">
+                    <a href="/student/forgot-password">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="login-btn">Log In</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 IOE Pulchowk Campus. All rights reserved.</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Course</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <h1>Add a New Course</h1>
+    {% if error %}
+        <p style="color: red;">Error: {{ error }}</p>
+    {% endif %}
+    <form method="post" action="/admin/add_course">
+        <label for="course_code">Course Code:</label>
+        <input type="text" id="course_code" name="course_code" required><br>
+        
+        <label for="course_name">Course Name:</label>
+        <input type="text" id="course_name" name="course_name" required><br>
+        
+        <label for="credits">Credits:</label>
+        <input type="number" id="credits" name="credits" required><br>
+        
+        <label for="max_seats">Max Seats:</label>
+        <input type="number" id="max_seats" name="max_seats" required><br>
+        
+        <label for="min_seats">Min Seats:</label>
+        <input type="number" id="min_seats" name="min_seats" required><br>
+        
+        <label for="department">Department:</label>
+        <input type="text" id="department" name="department" required><br>
+        
+        <label for="course_type">Course Type:</label>
+        <input type="text" id="course_type" name="course_type" required><br>
+        
+        <label for="prerequisites">Prerequisites:</label>
+        <textarea id="prerequisites" name="prerequisites"></textarea><br>
+        
+        <label for="course_description">Course Description:</label>
+        <textarea id="course_description" name="course_description"></textarea><br>
+        
+        <label for="syllabus_link">Syllabus Link:</label>
+        <input type="url" id="syllabus_link" name="syllabus_link"><br>
+        
+        <button type="submit">Add Course</button>
+    </form>
+</body>
+</html>

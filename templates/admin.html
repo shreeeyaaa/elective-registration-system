@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <h1>Admin Dashboard</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Registration ID</th>
+                <th>Student Name</th>
+                <th>Course</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for registration in registrations %}
+            <tr>
+                <td>{{ registration.registration_id }}</td>
+                <td>{{ registration.student_name }}</td>
+                <td>{{ registration.course_name }}</td>
+                <td>{{ registration.status }}</td>
+                <td>
+                    <form method="POST" action="/update_registration">
+                        <input type="hidden" name="registration_id" value="{{ registration.registration_id }}">
+                        <select name="status">
+                            <option value="Pending" {% if registration.status == "Pending" %}selected{% endif %}>Pending</option>
+                            <option value="Approved" {% if registration.status == "Approved" %}selected{% endif %}>Approved</option>
+                            <option value="Rejected" {% if registration.status == "Rejected" %}selected{% endif %}>Rejected</option>
+                        </select>
+                        <button type="submit">Update</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        
+        
+    </table>
+    <a href="/">Back to Home</a>
+</body>
+</html>
