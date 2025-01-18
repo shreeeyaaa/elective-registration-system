@@ -50,12 +50,19 @@ This is an **Elective Course Registration System** designed for managing course 
 
 ### Login Page
 ![Login Page](images/login.png)
+![Login Page](images/adminlogin.png)
 
 ### Student Dashboard
 ![Student Dashboard](images/dashboard.png)
+
+### Admin Dashboard
+![Admin Dashboard](images/admin.png)
+![Admin Dashboard](images/admin2.png)
 
 ### Course Registration
 ![Course Registration](images/register.png)
 
 ### Drop Courses
 ![Drop Courses](images/drop.png)
+
+### Admin 
