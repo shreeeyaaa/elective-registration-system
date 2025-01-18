@@ -200,8 +200,33 @@ def show_login(request: Request, type: str):
     if type == "student":
         return templates.TemplateResponse("student_login.html", {"request": request})
     # Optionally handle admin login here
+    elif type == "admin":
+        return templates.TemplateResponse("admin_login.html", {"request": request})
+    else:
+        return RedirectResponse(url="/", status_code=303)
 
 
+# Add new route for admin login
+@app.post("/admin-authenticate", response_class=HTMLResponse)
+def admin_login(
+    request: Request,
+    admin_id: str = Form(...),
+    email: str = Form(...),
+    db: Session = Depends(get_db),
+):
+    # Query to find admin by both admin_id and email
+    admin = db.query(Admin).filter(
+        Admin.admin_id == admin_id,
+        Admin.email == email
+    ).first()
+    
+    if admin:
+        return RedirectResponse(url="/admin", status_code=303)
+    
+    return templates.TemplateResponse("admin_login.html", {
+        "request": request,
+        "error": "Invalid admin credentials"
+    })
 
 @app.post("/student_login", response_class=HTMLResponse)
 def student_login(
@@ -276,9 +301,14 @@ def available_courses(request: Request):
 
 # Update the admin dashboard route
 @app.get("/admin", response_class=HTMLResponse)
-def admin_dashboard(request: Request, db: SessionLocal = Depends(get_db)):
+def admin_dashboard(
+    request: Request,
+    message: str = Query(None),
+    error: str = Query(None),
+    db: SessionLocal = Depends(get_db)
+):
     try:
-        # Modified query to load the relationships
+        # Get all registrations with student and course info
         registrations = (
             db.query(Registration)
             .options(
@@ -295,18 +325,21 @@ def admin_dashboard(request: Request, db: SessionLocal = Depends(get_db)):
             {
                 "request": request, 
                 "registrations": registrations,
-                "courses": courses
+                "courses": courses,
+                "message": message,  # Success message if any
+                "error": error      # Error message if any
             }
         )
     except Exception as e:
-        print(f"Error in admin dashboard: {str(e)}")  # Add logging
+        print(f"Error in admin dashboard: {str(e)}")
         return templates.TemplateResponse(
             "admin.html", 
             {
                 "request": request, 
                 "error": str(e),
                 "registrations": [],
-                "courses": []
+                "courses": [],
+                "message": None
             }
         )
 # Add route to add a course
@@ -352,7 +385,45 @@ def add_course(
         return templates.TemplateResponse("add_course.html", {"request": request, "error": str(e)})
 
 
+# Add this route to your main.py
 
+@app.post("/update_registration")
+async def update_registration(
+    request: Request,
+    registration_id: int = Form(...),
+    status: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    try:
+        # Find the registration
+        registration = db.query(Registration).filter(Registration.registration_id == registration_id).first()
+        
+        if not registration:
+            raise HTTPException(status_code=404, detail="Registration not found")
+        
+        # Update the status
+        registration.status = status
+        
+        # Add timestamp for approval/rejection if you want to track it
+        if status in ["Approved", "Rejected"]:
+            registration.reg_timestamp = datetime.now()
+        
+        # Commit the changes
+        db.commit()
+        
+        # Redirect back to admin dashboard with success message
+        return RedirectResponse(
+            url="/admin?message=Registration+updated+successfully",
+            status_code=303
+        )
+        
+    except Exception as e:
+        db.rollback()
+        # Redirect back to admin dashboard with error message
+        return RedirectResponse(
+            url=f"/admin?error=Failed+to+update+registration:+{str(e)}",
+            status_code=303
+        )
 
 
 from sqlalchemy.orm import aliased

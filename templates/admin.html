@@ -33,6 +33,23 @@
             margin: 0 auto;
         }
 
+        .success-message {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    border-left: 4px solid #4caf50;
+}
+
+.error-message {
+    background-color: #ffebee;
+    color: #c62828;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    border-left: 4px solid #ef5350;
+}
         h2 {
             color: #34495e;
             margin: 1.5rem 0 1rem;
@@ -164,6 +181,18 @@
 <body>
     <header>
         <h1>Admin Dashboard</h1>
+        {% if message %}
+<div class="success-message">
+    {{ message }}
+</div>
+{% endif %}
+
+{% if error %}
+<div class="error-message">
+    {{ error }}
+</div>
+{% endif %}
+
     </header>
     <main>
         {% if error %}
