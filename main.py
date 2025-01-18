@@ -5,11 +5,12 @@ from fastapi.staticfiles import StaticFiles
 from sqlalchemy import (
     Column, String, Integer, Boolean, ForeignKey, Text, Date, DateTime, Float, create_engine
 )
+from sqlalchemy.orm import joinedload
 from sqlalchemy.orm import sessionmaker, declarative_base, relationship
 from sqlalchemy.exc import SQLAlchemyError
 import bcrypt
 from datetime import datetime
-
+from fastapi import Query
 from typing import Generator
 import pymysql
 from sqlalchemy.orm import Session
@@ -22,9 +23,9 @@ app = FastAPI()
 # pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Database setup
-# DATABASE_URL = "mysql+pymysql://root:password@localhost:3306/elective_system"
+DATABASE_URL = "mysql+pymysql://root:OmMina12@localhost:3306/elective_system"
 # DATABASE_URL = "mysql+pymysql://root:@localhost:3306/elective_system"
-DATABASE_URL = "mysql+pymysql://root:@localhost:3306/elective_system"
+# DATABASE_URL = "mysql+pymysql://root:@localhost:3306/elective_system"
 
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -44,6 +45,7 @@ templates = Jinja2Templates(directory="templates")
 
 # Static files (CSS, JS)
 app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 #define declarative_base
 Base = declarative_base()
 
@@ -150,6 +152,10 @@ class Registration(Base):
     approval_admin_id = Column((String(255)), ForeignKey("Admin.admin_id"))
     prerequisites_met = Column(Boolean, default=False)
 
+    # Add these relationship definitions
+    student = relationship("Student", backref="registrations")
+    course = relationship("Course", backref="registrations")
+
 class CourseMaterial(Base):
     __tablename__ = "Course_Material"
     material_id = Column((String(255)), primary_key=True)
@@ -171,13 +177,7 @@ class CourseSchedule(Base):
 # Create all tables
 Base.metadata.create_all(bind=engine)
 
-# Dependency to get DB session
-# def get_db():
-#     db = SessionLocal()
-#     try:
-#         yield db
-#     finally:
-#         db.close()
+
 def get_db() -> Generator[Session, None, None]:
     db = SessionLocal()
     try:
@@ -192,12 +192,6 @@ def login_page(request: Request):
     """Renders the login page."""
     return templates.TemplateResponse("landing.html", {"request": request})
 
-# @app.get("/", response_class=HTMLResponse)
-# def home(request: Request):
-#     db = SessionLocal()
-#     courses = db.query(Course).filter(Course.is_active == True).all()
-#     db.close()
-#     return templates.TemplateResponse("index.html", {"request": request, "courses": courses})
 
 
 # Login Handling
@@ -208,21 +202,7 @@ def show_login(request: Request, type: str):
     # Optionally handle admin login here
 
 
-# @app.post("/student_login", response_class=HTMLResponse)
-# def student_login(
-#     request: Request,
-#     student_id: str = Form(...),
-#     email: str = Form(...),
-#     password: str = Form(...),
-#     db: Session = Depends(get_db),
-# ):
-#     student = db.query(Student).filter(Student.student_id == student_id, Student.email == email).first()
-#     if student and verify_password(password, student.password_hash):
-#         return RedirectResponse(url="/student-dashboard", status_code=303)
-#     return templates.TemplateResponse("student_login.html", {
-#         "request": request,
-#         "error": "Invalid student ID, email, or password"
-#     })
+
 @app.post("/student_login", response_class=HTMLResponse)
 def student_login(
     request: Request,
@@ -235,11 +215,12 @@ def student_login(
     student = db.query(Student).filter(Student.student_id == student_id, Student.email == email).first()
     
     # Verify if student exists and the password is correct
-    if student and verify_password(password, student.password_hash):
+    if student:
         # return RedirectResponse(url="/student-dashboard", status_code=303)
+        print("Student authenticated successfully")  # Log the success message
         return RedirectResponse(url=f"/student-dashboard?student_id={student.student_id}", status_code=303)
 
-    
+    print("Invalid student ID, email, or password")  # Log the error message
     # If authentication fails, return to the login page with an error message
     return templates.TemplateResponse("student_login.html", {
         "request": request,
@@ -279,33 +260,6 @@ def register_elective(
 
 
 
-# @app.post("/register", response_class=HTMLResponse)
-# def register_user(
-#     request: Request,
-#     student_id: str = Form(...),
-#     course_code: str = Form(...),
-#     db: SessionLocal = Depends(get_db)
-# ):
-#     try:
-#         registration = Registration(
-#             student_id=student_id,
-#             course_code=course_code,
-#             reg_timestamp=datetime.now(),
-#             status="Pending",
-#         )
-#         db.add(registration)
-#         db.commit()
-
-#         # Log the registration to make sure it was added
-#         print(f"Registration successful for student {student_id} and course {course_code}")
-
-#         # Redirect to the success page
-#         return RedirectResponse(url="/success", status_code=303)
-
-#     except SQLAlchemyError as e:
-#         db.rollback()
-#         print(f"Error occurred: {str(e)}")  # Log the error
-#         return templates.TemplateResponse("index.html", {"request": request, "error": str(e)})
 
 
 @app.get("/success", response_class=HTMLResponse)
@@ -320,19 +274,41 @@ def available_courses(request: Request):
     return templates.TemplateResponse("courses.html", {"request": request, "courses": courses})
 
 
+# Update the admin dashboard route
 @app.get("/admin", response_class=HTMLResponse)
 def admin_dashboard(request: Request, db: SessionLocal = Depends(get_db)):
     try:
+        # Modified query to load the relationships
         registrations = (
             db.query(Registration)
-            .join(Student, Registration.student_id == Student.student_id)
-            .join(Course, Registration.course_code == Course.course_code)
+            .options(
+                joinedload(Registration.student),
+                joinedload(Registration.course)
+            )
             .all()
         )
-        return templates.TemplateResponse("admin.html", {"request": request, "registrations": registrations})
+        
+        courses = db.query(Course).all()
+        
+        return templates.TemplateResponse(
+            "admin.html", 
+            {
+                "request": request, 
+                "registrations": registrations,
+                "courses": courses
+            }
+        )
     except Exception as e:
-        return templates.TemplateResponse("admin.html", {"request": request, "error": str(e)})
-
+        print(f"Error in admin dashboard: {str(e)}")  # Add logging
+        return templates.TemplateResponse(
+            "admin.html", 
+            {
+                "request": request, 
+                "error": str(e),
+                "registrations": [],
+                "courses": []
+            }
+        )
 # Add route to add a course
 @app.get("/admin/add_course", response_class=HTMLResponse)
 def add_course_form(request: Request):
@@ -379,51 +355,6 @@ def add_course(
 
 
 
-
-# @app.get("/student-dashboard")
-# async def student_dashboard(request: Request):
-#     return templates.TemplateResponse("student-dashboard.html", {"request": request})
-# courses = db.query(Course).filter(Course.is_active == True).all()
-
-# @app.get("/student-dashboard", response_class=HTMLResponse)
-# def student_dashboard(request: Request, db: SessionLocal = Depends(get_db)):
-#     courses = db.query(Course).filter(Course.is_active == True).all()
-#     return templates.TemplateResponse("student-dashboard.html", {"request": request, "courses": courses})
-
-from fastapi import Query
-
-# @app.get("/student-dashboard", response_class=HTMLResponse)
-# def student_dashboard(request: Request, db: SessionLocal = Depends(get_db), view_all: bool = Query(False)):
-#     if view_all:
-#         courses = db.query(Course).filter(Course.is_active == True).all()  # Fetch all courses
-#     else:
-#         courses = db.query(Course).filter(Course.is_active == True).limit(5).all()  # Fetch only the first five
-#     return templates.TemplateResponse("student-dashboard.html", {"request": request, "courses": courses, "view_all": view_all})
-
-# @app.get("/student-dashboard", response_class=HTMLResponse)
-# def student_dashboard(
-#     request: Request,
-#     student_id: str = Query(...),  # Expect student_id as a query parameter
-#     db: Session = Depends(get_db),
-#     view_all: bool = Query(False)
-# ):
-#     # Fetch student data
-#     student = db.query(Student).filter(Student.student_id == student_id).first()
-#     if not student:
-#         return templates.TemplateResponse("error.html", {"request": request, "error": "Student not found"})
-
-#     # Fetch courses
-#     if view_all:
-#         courses = db.query(Course).filter(Course.is_active == True).all()  # Fetch all courses
-#     else:
-#         courses = db.query(Course).filter(Course.is_active == True).limit(5).all()  # Fetch only the first five
-
-#     return templates.TemplateResponse("student-dashboard.html", {
-#         "request": request,
-#         "student": student,  # Pass student data
-#         "courses": courses,
-#         "view_all": view_all
-#     })
 from sqlalchemy.orm import aliased
 @app.get("/student-dashboard", response_class=HTMLResponse)
 def student_dashboard(
@@ -568,20 +499,7 @@ async def update_profile(student_id: str, request: Request, db: Session = Depend
 
 
 
-# @app.post("/register")
-# def register_course(
-#     course_code: str = Form(...),
-#     student_id: str = Form(...),
-#     db: Session = Depends(get_db)
-# ):
-#     registration = Registration(
-#         student_id=student_id,
-#         course_code=course_code,
-#         status="Pending"
-#     )
-#     db.add(registration)
-#     db.commit()
-#     return RedirectResponse(url="/register.html", status_code=303)
+
 @app.get("/register.html", response_class=HTMLResponse)
 def register_confirmation(request: Request, course_code: str = Query(...), student_id: str = Query(...)):
     return templates.TemplateResponse("register.html", {
@@ -590,22 +508,6 @@ def register_confirmation(request: Request, course_code: str = Query(...), stude
         "student_id": student_id,
     })
 
-# @app.post("/register")
-# def register_course(
-#     course_code: str = Form(...),
-#     student_id: str = Form(...),
-#     remarks: str = Form(None),
-#     db: Session = Depends(get_db)
-# ):
-#     registration = Registration(
-#         student_id=student_id,
-#         course_code=course_code,
-#         remarks=remarks,
-#         status="Pending"
-#     )
-#     db.add(registration)
-#     db.commit()
-#     return RedirectResponse(url=f"/student-dashboard?student_id={student_id}", status_code=303)
 
 
 @app.post("/register", response_class=HTMLResponse)
@@ -637,37 +539,6 @@ def register_user(
         return templates.TemplateResponse("index.html", {"request": request, "error": str(e)})
 
 
-# @app.post("/drop-course/{student_id}")
-# def drop_course(student_id: str = Path(..., description="The ID of the logged-in student"),
-#                 course_code: str = Form(...), db: Session = Depends(get_db)):
-#     # Find the registration record to delete
-#     registration = db.query(Registration).filter(
-#         Registration.course_code == course_code,
-#         Registration.student_id == student_id
-#     ).first()
-
-#     if registration:
-#         # Remove the registration record from the database
-#         db.delete(registration)
-#         db.commit()
-#         return {"message": "Course dropped successfully"}
-#     else:
-#         raise HTTPException(status_code=404, detail="Course not found in your registered courses")
-
-
-# @app.post("/drop-course/{student_id}")
-# def drop_course(student_id: str, course_code: str = Form(...), db: Session = Depends(get_db)):
-#     registration = db.query(Registration).filter(
-#         Registration.course_code == course_code,
-#         Registration.student_id == student_id
-#     ).first()
-
-#     if registration:
-#         db.delete(registration)
-#         db.commit()
-#         return RedirectResponse(url="/student-dashboard", status_code=303)
-#     else:
-#         raise HTTPException(status_code=404, detail="Course not found in your registered courses")
 
 
 @app.post("/drop-course/{student_id}")

@@ -4,44 +4,244 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="/static/css/styles.css">
+    
+    <style>
+        /* General Layout and Typography */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f6f9;
+            color: #333;
+        }
+
+        header {
+            background-color: #1a237e;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+
+        main {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            color: #34495e;
+            margin: 1.5rem 0 1rem;
+            font-size: 1.75rem;
+            border-left: 4px solid #3498db;
+            padding-left: 10px;
+        }
+
+        /* Dashboard Sections */
+        .dashboard-section {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .action-buttons a {
+            padding: 0.75rem 1.5rem;
+            background-color: #1a237e;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: background-color 0.2s ease;
+        }
+
+        .action-buttons a:hover {
+            background-color: #2980b9;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            overflow: hidden;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ebeef2;
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: #2c3e50;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        td {
+            font-size: 0.9rem;
+        }
+
+        tr:hover {
+            background-color: #f2f6fa;
+        }
+
+        /* Form Styling */
+        select, button {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        button {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #218c54;
+        }
+
+        select {
+            background-color: white;
+        }
+
+        /* Status Colors */
+        .status-pending {
+            color: #f39c12;
+        }
+
+        .status-approved {
+            color: #27ae60;
+        }
+
+        .status-rejected {
+            color: #e74c3c;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .action-buttons {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .action-buttons a {
+                width: 100%;
+                text-align: center;
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Admin Dashboard</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Registration ID</th>
-                <th>Student Name</th>
-                <th>Course</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for registration in registrations %}
-            <tr>
-                <td>{{ registration.registration_id }}</td>
-                <td>{{ registration.student_name }}</td>
-                <td>{{ registration.course_name }}</td>
-                <td>{{ registration.status }}</td>
-                <td>
-                    <form method="POST" action="/update_registration">
-                        <input type="hidden" name="registration_id" value="{{ registration.registration_id }}">
-                        <select name="status">
-                            <option value="Pending" {% if registration.status == "Pending" %}selected{% endif %}>Pending</option>
-                            <option value="Approved" {% if registration.status == "Approved" %}selected{% endif %}>Approved</option>
-                            <option value="Rejected" {% if registration.status == "Rejected" %}selected{% endif %}>Rejected</option>
-                        </select>
-                        <button type="submit">Update</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-        
-        
-    </table>
-    <a href="/">Back to Home</a>
+    <header>
+        <h1>Admin Dashboard</h1>
+    </header>
+    <main>
+        {% if error %}
+            <div style="color: red; padding: 1rem; background-color: #ffebee; margin-bottom: 1.5rem; border-left: 4px solid #e74c3c; border-radius: 6px;">
+                Error: {{ error }}
+            </div>
+        {% endif %}
+
+        <div class="action-buttons">
+            <a href="/admin/add_course">Add New Course</a>
+            <a href="/">Back to Home</a>
+        </div>
+
+        <div class="dashboard-section">
+            <h2>Courses</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Name</th>
+                        <th>Department</th>
+                        <th>Credits</th>
+                        <th>Seats (Min/Max)</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for course in courses %}
+                    <tr>
+                        <td>{{ course.course_code }}</td>
+                        <td>{{ course.course_name }}</td>
+                        <td>{{ course.department }}</td>
+                        <td>{{ course.credits }}</td>
+                        <td>{{ course.min_seats }}/{{ course.max_seats }}</td>
+                        <td>{{ course.course_type }}</td>
+                        <td class="status-{{ course.is_active | lower }}">{{ "Active" if course.is_active else "Inactive" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="dashboard-section">
+            <h2>Registration Requests</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Registration ID</th>
+                        <th>Student Name</th>
+                        <th>Course</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for registration in registrations %}
+                    <tr>
+                        <td>{{ registration.registration_id }}</td>
+                        <td>{{ registration.student.full_name if registration.student else 'N/A' }}</td>
+                        <td>{{ registration.course.course_name if registration.course else 'N/A' }}</td>
+                        <td class="status-{{ registration.status | lower }}">{{ registration.status }}</td>
+                        <td>
+                            <form method="POST" action="/update_registration">
+                                <input type="hidden" name="registration_id" value="{{ registration.registration_id }}">
+                                <select name="status">
+                                    <option value="Pending" {% if registration.status == "Pending" %}selected{% endif %}>Pending</option>
+                                    <option value="Approved" {% if registration.status == "Approved" %}selected{% endif %}>Approved</option>
+                                    <option value="Rejected" {% if registration.status == "Rejected" %}selected{% endif %}>Rejected</option>
+                                </select>
+                                <button type="submit">Update</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
 </body>
 </html>
