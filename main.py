@@ -23,7 +23,7 @@ app = FastAPI()
 # pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Database setup
-DATABASE_URL = "mysql+pymysql://root:OmMina12@localhost:3306/elective_system"
+DATABASE_URL = "mysql+pymysql://root:<yourpassword>@localhost:3306/elective_system"
 # DATABASE_URL = "mysql+pymysql://root:@localhost:3306/elective_system"
 # DATABASE_URL = "mysql+pymysql://root:@localhost:3306/elective_system"
 
